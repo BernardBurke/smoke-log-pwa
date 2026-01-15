@@ -1,0 +1,22 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Linux system files
+.DS_Store
+.directory
+*~
+
+# Development environments
+.venv/
+env/
+venv/
+.env
+
+# Git/Editor swap files
+*.swp
+*.swo
+
+# Logs
+*.log
