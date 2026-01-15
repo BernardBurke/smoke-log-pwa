@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smoke Log</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 20px; background: #1a1a1a; color: #eee; display: flex; flex-direction: column; align-items: center; }
+        .card { background: #2d2d2d; padding: 25px; border-radius: 15px; width: 100%; max-width: 350px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { margin-top: 0; text-align: center; color: #fff; }
+        label { display: block; margin: 20px 0 5px; font-weight: bold; }
+        input[type="range"] { width: 100%; margin: 15px 0; accent-color: #ff4757; cursor: pointer; }
+        .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 20px; }
+        #current-val { color: #ff4757; font-weight: bold; font-size: 1.1rem; }
+        textarea { width: 100%; box-sizing: border-box; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #3d3d3d; color: #fff; height: 80px; font-size: 16px; }
+        button { width: 100%; padding: 15px; margin-top: 20px; background: #ff4757; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+        button:active { background: #ff6b81; transform: scale(0.98); }
+        #status { margin-top: 15px; font-size: 0.9rem; text-align: center; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Cigarette Log</h2>
+        
+        <label>Satisfaction Scale</label>
+        <input type="range" id="satisfaction" min="1" max="5" value="3" oninput="document.getElementById('current-val').innerText = this.value">
+        <div class="scale-labels">
+            <span>1: Great</span>
+            <span id="current-val">3</span>
+            <span>5: Why bother?</span>
+        </div>
+
+        <textarea id="comment" placeholder="Optional: What triggered this?"></textarea>
+        
+        <button onclick="logData()">Log Cigarette</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function logData() {
+            const status = document.getElementById('status');
+            const comment = document.getElementById('comment').value;
+            const satisfaction = document.getElementById('satisfaction').value;
+            const url = 'https://script.google.com/macros/s/AKfycby-JDhAivI47Ahh5dl8WzU5ICzU9ao_RJQ8rzc46KX0Ds55bLjqsJV0lbgrTQQMD88e/exec';
+
+            status.innerText = "⏳ Saving...";
+            
+            try {
+                // Using 'no-cors' mode is required for Google Apps Script redirects
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    body: JSON.stringify({ comment, satisfaction })
+                });
+                status.innerText = "✅ Logged to Sheet!";
+                document.getElementById('comment').value = "";
+                document.getElementById('satisfaction').value = "3";
+                document.getElementById('current-val').innerText = "3";
+            } catch (e) {
+                status.innerText = "❌ Error: Check connection";
+            }
+        }
+    </script>
+</body>
+</html>
